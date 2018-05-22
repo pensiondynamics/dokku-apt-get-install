@@ -7,14 +7,14 @@ apt_get_install_main() {
   local IMG="dokku/$APP"
   local PKG="/home/dokku/${APP}/apt-packages"
 
-  echo "-----> installing packages from ${PKG} ..."
+  echo "-----> installing packages from ${PKG}: $(xargs < "$PKG")..."
 
   CMD=$(cat <<-EOF
     export DEBIAN_FRONTEND=noninteractive
     if [ -f "$PKG" ]; then
         apt-get update
-        apt-get install -y \$(cat "$PKG" | xargs)
-        echo "-----> installed packages: \$(cat "$PKG" | xargs)"
+        apt-get install -y \$(xargs < "$PKG")
+        echo "-----> installed packages: \$(xargs < "$PKG")"
     else
       echo "-----> no additional packages found!"      
     fi
@@ -22,10 +22,14 @@ apt_get_install_main() {
 EOF
 )
 
-  id=$(docker run -d $IMG /bin/bash -e -c "$CMD")
-  docker attach $id
-  test $(docker wait $id) -eq 0
-  docker commit $id $IMG > /dev/null
+  echo "-----------"
+  echo "$CMD"
+  echo "-----------"
+
+  id=$(docker run -d "$IMG" /bin/bash -e -c "$CMD")
+  docker attach "$id"
+  test "$(docker wait "$id")" -eq 0
+  docker commit "$id" "$IMG" > /dev/null
 }
 
 apt_get_install_main "$@"
