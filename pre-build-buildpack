@@ -5,26 +5,26 @@ set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 apt_get_install_main() {
   local APP="$1"
   local IMG="dokku/$APP"
-  local PKG="/home/dokku/${APP}/apt-packages"
+  local LST="/home/dokku/${APP}/apt-packages"
+  local PKG
 
-  echo "-----> installing packages from ${PKG}: $(xargs < "$PKG")..."
+  if [ -f "$LST" ] ; then
+    PKG=$(xargs < "$LST")
+    echo "-----> installing packages from ${LST}..."
+  fi
 
   CMD=$(cat <<-EOF
     export DEBIAN_FRONTEND=noninteractive
-    if [ -f "$PKG" ]; then
+    if [ -n "$PKG" ]; then
         apt-get update
-        apt-get install -y \$(xargs < "$PKG")
-        echo "-----> installed packages: \$(xargs < "$PKG")"
+        apt-get install -y "$PKG"
+        echo "-----> installed packages: ${PKG}"
     else
       echo "-----> no additional packages found!"      
     fi
     sleep 1
 EOF
 )
-
-  echo "-----------"
-  echo "$CMD"
-  echo "-----------"
 
   id=$(docker run -d "$IMG" /bin/bash -e -c "$CMD")
   docker attach "$id"
