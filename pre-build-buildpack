@@ -22,7 +22,7 @@ apt_get_install_main() {
 EOF
 )
 
-  id=$(docker run -d $IMG /bin/bash -e -c "$COMMAND")
+  id=$(docker run -d $IMG /bin/bash -e -c "$CMD")
   docker attach $id
   test $(docker wait $id) -eq 0
   docker commit $id $IMG > /dev/null
