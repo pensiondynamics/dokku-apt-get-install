@@ -9,7 +9,7 @@ apt_get_install_main() {
 
   echo "-----> installing packages ..."
 
-  CMD=$(cat <<EOF
+  CMD=$(cat <<-EOF
     export DEBIAN_FRONTEND=noninteractive
     if [ -f "$PKG" ]; then
         apt-get update
