@@ -17,8 +17,8 @@ apt_get_install_main() {
         echo "-----> installed packages: \$(cat "$PKG" | xargs)"
     fi
     sleep 1
-    EOF
-  )
+EOF
+)
 
   id=$(docker run -d $IMG /bin/bash -e -c "$COMMAND")
   docker attach $id
