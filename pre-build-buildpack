@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+
+apt_get_install_main() {
+  local APP="$1"
+  local IMG="dokku/$APP"
+  local PKG="/app/apt-packages"
+
+  echo "-----> installing packages ..."
+
+  CMD=$(cat <<EOF
+    export DEBIAN_FRONTEND=noninteractive
+    if [ -f "$PKG" ]; then
+        apt-get update
+        apt-get install -y \$(cat "$PKG" | xargs)
+        echo "-----> installed packages: \$(cat "$PKG" | xargs)"
+    fi
+    sleep 1
+    EOF
+  )
+
+  id=$(docker run -d $IMG /bin/bash -e -c "$COMMAND")
+  docker attach $id
+  test $(docker wait $id) -eq 0
+  docker commit $id $IMG > /dev/null
+}
+
+echo "-----------"
+echo "$@"
+echo "-----------"
+
+apt_get_install_main "$@"
