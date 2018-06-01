@@ -15,9 +15,9 @@ apt_get_install_main() {
 
   CMD=$(cat <<-EOF
     export DEBIAN_FRONTEND=noninteractive
-    if [ -n "$PKG" ]; then
+    if [ -n "$PKG" ] ; then
         apt-get update
-        apt-get install -y "$PKG"
+        apt-get install -y ${PKG}
         echo "-----> installed packages: ${PKG}"
     else
       echo "-----> no additional packages found!"      
