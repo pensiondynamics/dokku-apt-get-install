@@ -29,6 +29,8 @@ EOF
     docker attach "$id"
     test "$(docker wait "$id")" -eq 0
     docker commit "$id" "$IMG" > /dev/null
+  else
+    echo "-----> apt-packages not found"
   fi
 }
 
