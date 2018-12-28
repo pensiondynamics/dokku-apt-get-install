@@ -1,4 +1,4 @@
 [plugin]
 description = "apt-get install packages during docker build"
-version = "0.0.8"
+version = "0.0.9"
 [plugin.config]

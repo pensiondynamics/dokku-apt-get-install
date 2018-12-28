@@ -11,25 +11,25 @@ apt_get_install_main() {
   if [ -f "$LST" ] ; then
     PKG=$(xargs < "$LST")
     echo "-----> installing packages from ${LST}..."
-  fi
 
-  CMD=$(cat <<-EOF
-    export DEBIAN_FRONTEND=noninteractive
-    if [ -n "$PKG" ] ; then
-        apt-get update
-        apt-get install -y ${PKG}
-        echo "-----> installed packages: ${PKG}"
-    else
-      echo "-----> no additional packages found!"      
-    fi
-    sleep 1
+    CMD=$(cat <<-EOF
+      export DEBIAN_FRONTEND=noninteractive
+      if [ -n "$PKG" ] ; then
+          apt-get update
+          apt-get install -y ${PKG}
+          echo "-----> installed packages: ${PKG}"
+      else
+        echo "-----> no additional packages found!"      
+      fi
+      sleep 1
 EOF
 )
 
-  id=$(docker run -d "$IMG" /bin/bash -e -c "$CMD")
-  docker attach "$id"
-  test "$(docker wait "$id")" -eq 0
-  docker commit "$id" "$IMG" > /dev/null
+    id=$(docker run -d "$IMG" /bin/bash -e -c "$CMD")
+    docker attach "$id"
+    test "$(docker wait "$id")" -eq 0
+    docker commit "$id" "$IMG" > /dev/null
+  fi
 }
 
 apt_get_install_main "$@"
