@@ -16,7 +16,7 @@ apt_get_install_main() {
       export DEBIAN_FRONTEND=noninteractive
       if [ -n "$PKG" ] ; then
           apt-get update
-          apt-get install -y --no-install-recommends ${PKG}
+          apt-get install -y ${PKG}
           echo "-----> installed packages: ${PKG}"
       else
         echo "-----> no additional packages found!"      
